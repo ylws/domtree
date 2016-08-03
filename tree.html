@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<style type="text/css">
+			.treeroot{
+				border:1px solid red;
+				float: left;
+				height: 600px;
+				width: 600px;
+			}
+			.treeroot .treeson,.treeroot .treesoned{
+				float: left;
+				width: 100%;
+			}
+			.treeroot .treeson:hover{
+				background: #f1f1f1;
+			}
+			.treeroot .treesoned:hover{
+				background: #f1f1f1;
+			}
+			.treeroot .iconopen{
+				background: url(global_icon_2.png) 0 -200px no-repeat;
+				float: left;
+				height: 15px;
+				width: 20px;
+			}
+			.treeroot .iconclose{
+				background: url(global_icon_2.png) 0 -220px no-repeat;
+				float: left;
+				height: 15px;
+				width: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		
+		<div class="treeroot">
+			<div class="treeson">
+				<div class="title">
+					<div class="iconopen"></div>
+					<a href="">1</a>
+				</div>
+				<div class="treeson">
+					<div class="title">
+						<div class="iconclose"></div>
+						<a href="">1-1</a>
+					</div>
+					<div class="title">
+						<div class="iconopen"></div>
+						<a href="">1-1</a>
+					</div>
+					<div class="treeson">
+						<div class="title">
+							<div class="iconclose"></div>
+							<a href="">1-1-1</a>
+						</div>
+					</div>
+					<div class="title">
+						<div class="iconclose"></div>
+						<a href="">1-1</a>
+					</div>
+					<div class="treeson">
+						<div class="title">
+							<div class="iconclose"></div>
+							<a href="">1-1-1</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="treeson">
+				<div class="title">
+					<div class="iconopen"></div>
+					<a href="">1</a>
+				</div>
+				<div class="treeson">
+					<div class="title">
+						<div class="iconclose"></div>
+						<a href="">1-2</a>
+					</div>
+					<div class="title">
+						<div class="iconopen"></div>
+						<a href="">1-2</a>
+					</div>
+					<div class="treeson">
+						<div class="title">
+							<div class="iconclose"></div>
+							<a href="">1-2-1</a>
+						</div>
+						<div class="treeson">
+							<div class="title">
+								<div class="iconclose"></div>
+								<a href="">1-2-1</a>
+							</div>
+							<div class="treeson">
+								<div class="title">
+									<div class="iconclose"></div>
+									<a href="">1-2-1</a>
+								</div>
+							</div>
+						</div>
+						<div class="title">
+							<div class="iconclose"></div>
+							<a href="">1-2-1</a>
+						</div>
+						<div class="treeson">
+							<div class="title">
+								<div class="iconclose"></div>
+								<a href="">1-2-1</a>
+							</div>
+							<div class="treeson">
+								<div class="title">
+									<div class="iconclose"></div>
+									<a href="">1-2-1</a>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="title">
+						<div class="iconclose"></div>
+						<a href="">1-2</a>
+					</div>
+				</div>
+			</div>
+			<div class="treeson">
+				<div class="title">
+					<div class="iconclose"></div>
+					<a href="">2</a>
+				</div>
+			</div>
+		</div>
+		<script type="text/javascript">
+			function treeShineOn(obj){
+				this.rootC=obj['rootC'],
+				this.sonC=obj['sonC'],
+				this.titleC=obj['titleC'],
+				this.iconOpen=obj['iconOpenC'],
+				this.iconClose=obj['iconCloseC'],
+				this.marginL=obj['marginL'],
+				this.sonselectedC=obj['sonselectedC'],
+				this.mutexFlag=obj['mutexFlag'],
+				this.init();
+			}
+			treeShineOn.prototype={
+				"init":function(){
+					var treeroot=document.getElementsByClassName(this.rootC)[0];
+					var treetitle=treeroot.querySelectorAll("."+this.titleC);
+					for(var i=0;i<treetitle.length;i++){
+						var nextElC=treetitle[i].nextElementSibling;
+						if(nextElC){//只针对有子栏目的菜单做处理
+							if(nextElC.getAttribute("class")==this.sonC){
+								var _this=this;
+								treetitle[i].children[0].setAttribute("class",this.iconOpen);
+								treetitle[i].children[0].onclick=function(){//绑定加号减号的点击事件，如果是填充进来的数据，可以使用监听机制来做
+									var flag=this.getAttribute("class");//是否打开样式表标识
+									var indflag=this.parentNode.parentNode.getAttribute("ind");//添加层级关系，用户图标的marginleft计算
+									if(indflag==null){
+										indflag=1
+									}
+									else{
+										indflag=parseInt(indflag)+1;
+									}
+									if(flag==_this.iconOpen){//样式表为加号，标识可展开
+										if(_this.mutexFlag){
+											//一级菜单处理
+											var oneclick=this.parentNode.parentNode.parentNode;
+											if(oneclick.getAttribute("class")==_this.rootC){
+												var onechilds=oneclick.children;//siblings操作，初始化其他所有子菜单，图标样式，显示隐藏
+												for(k=0;k<onechilds.length;k++){
+													if(onechilds[k].getAttribute("class")==_this.sonselectedC){
+														onechilds[k].setAttribute("class",_this.sonC);//重置子菜单选中的样式
+														onechilds[k].children[1].style.display="none";//隐藏所有子菜单
+														onechilds[k].children[0].children[0].setAttribute("class",_this.iconOpen);//重置图标选中的样式
+													}
+												}
+											}
+											else{
+												//二级菜单处理
+												var twoclick=this.parentNode.parentNode.children;
+												for(var k=0;k<twoclick.length;k++){
+													if(twoclick[k].getAttribute("class")==_this.sonC){
+														twoclick[k].style.display="none";//隐藏所有子菜单
+													}
+													if(twoclick[k].getAttribute("class")==_this.titleC){
+														if(twoclick[k].nextElementSibling){//去除没有子菜单的图标操作
+															if(twoclick[k].nextElementSibling.getAttribute("class")==_this.sonC){
+																twoclick[k].children[0].setAttribute("class",_this.iconOpen);//重置有子菜单的tittle的图标为加号
+															}
+														}
+														
+													}
+												}
+											}
+											this.parentNode.parentNode.setAttribute("class",_this.sonselectedC);//给当前选中的父元素添加选中标识
+										}
+										this.setAttribute("class",_this.iconClose);//设置加号为减号
+										this.parentNode.nextElementSibling.style.display="block";//显示子菜单
+										this.parentNode.nextElementSibling.setAttribute("ind",indflag);//添加层级标识
+										var sonEls= this.parentNode.nextElementSibling.children;//子菜单子元素
+										for(var j=0;j<sonEls.length;j++){
+											if(sonEls[j].getAttribute("class")==_this.titleC){
+												sonEls[j].children[0].style.marginLeft=_this.marginL*sonEls[j].parentNode.getAttribute("ind")+"px";//设置marginleft值
+											}
+										}
+									}
+									else{
+										this.setAttribute("class",_this.iconOpen);//二次点击关闭，减号变加号
+										this.parentNode.parentNode.setAttribute("class",_this.sonC);//重置子菜单样式
+										this.parentNode.nextElementSibling.style.display="none";//隐藏子菜单
+									}
+								}
+							}
+							else{
+								treetitle[i].children[0].setAttribute("class",this.iconClose);
+							}
+						}	
+						
+						var PParentElC=treetitle[i].parentNode.parentNode;
+						if(PParentElC.getAttribute("class")==this.rootC){
+							treetitle[i].parentNode.style.display="block";//一级菜单处理事件，隐藏一级菜单的子菜单，只显示一级菜单
+						}
+						else{
+							treetitle[i].parentNode.style.display="none";//非一级菜单处理事件，隐藏所有子菜单
+						}
+					}	
+				},	
+			}
+			new treeShineOn({
+				"rootC":"treeroot",
+				"sonC":"treeson",
+				"sonselectedC":"treesoned",
+				"titleC":"title",
+				"iconOpenC":"iconopen",
+				"iconCloseC":"iconclose",
+				"marginL":20,
+				"mutexFlag":true
+			})
+		</script>
+	</body>
+</html>
